@@ -8,7 +8,7 @@ public class Cuenta {
 
     public Cuenta(String persona, BigDecimal saldo) {
         this.saldo = saldo;
-        this.persona = persona.toUpperCase();
+        this.persona = persona;
     }
 
     public Cuenta() {
