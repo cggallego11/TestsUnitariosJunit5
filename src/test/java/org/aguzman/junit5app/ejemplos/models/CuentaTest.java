@@ -28,9 +28,17 @@ class CuentaTest {
 
         Assertions.assertEquals(1000.12345, cuenta.getSaldo().doubleValue()); // Verifico que el saldo de la cuenta sea 1000.12345
         Assertions.assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO) < 0); // Verifico que el saldo de la cuenta no sea negativo
-        Assertions.assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0); // Verifico que el saldo de la cuenta sea positivo 
+        Assertions.assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0); // Verifico que el saldo de la cuenta sea positivo
 
+    }
 
+    @Test
+    void testReferenciaCuenta(){
+       Cuenta cuenta = new Cuenta("John Doe", new BigDecimal("8900.9997")); // Creo una cuenta con el nombre John Doe y saldo 8900.9997
+        Cuenta cuenta2 = new Cuenta("John Doe", new BigDecimal("8900.9997"));
+
+        // Assertions.assertNotEquals(cuenta, cuenta2); // Verifico que las cuentas no sean iguales
+        Assertions.assertEquals(cuenta, cuenta2); // Verifico que las cuentas sean iguales
     }
 
 }
