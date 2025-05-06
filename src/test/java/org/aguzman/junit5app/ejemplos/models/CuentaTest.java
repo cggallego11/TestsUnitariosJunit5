@@ -26,6 +26,7 @@ class CuentaTest {
     void testSaldoCuenta(){
         Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345"));// Creo una cuenta con el nombre Cristobal y saldo 1000.00
 
+        assertNotNull(cuenta.getSaldo()); // Verifico que el saldo no sea nulo
         Assertions.assertEquals(1000.12345, cuenta.getSaldo().doubleValue()); // Verifico que el saldo de la cuenta sea 1000.12345
         Assertions.assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO) < 0); // Verifico que el saldo de la cuenta no sea negativo
         Assertions.assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0); // Verifico que el saldo de la cuenta sea positivo
@@ -39,6 +40,16 @@ class CuentaTest {
 
         // Assertions.assertNotEquals(cuenta, cuenta2); // Verifico que las cuentas no sean iguales
         Assertions.assertEquals(cuenta, cuenta2); // Verifico que las cuentas sean iguales
+    }
+
+    @Test
+    void testDebitoCuenta(){
+        Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345")); // Creo una cuenta con el nombre Cristobal y saldo 1000.00
+        cuenta.debito(new BigDecimal(100)); // Realizo un debito de 100.00
+
+        assertNotNull(cuenta.getSaldo()); // Verifico que el saldo no sea nulo
+        assertEquals(900, cuenta.getSaldo().intValue()); // Verifico que el saldo de la cuenta sea 900.00
+        assertEquals("900.12345", cuenta.getSaldo().toPlainString()); // Verifico que el saldo de la cuenta sea 900.12345
     }
 
 }
