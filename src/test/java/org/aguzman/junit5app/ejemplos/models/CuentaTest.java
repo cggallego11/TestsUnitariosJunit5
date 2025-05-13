@@ -1,5 +1,6 @@
 package org.aguzman.junit5app.ejemplos.models;
 
+import org.aguzman.junit5app.ejemplos.exceptions.DineroInsuficienteException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -63,5 +64,46 @@ class CuentaTest {
         assertEquals("1100.12345", cuenta.getSaldo().toPlainString()); // Verifico que el saldo de la cuenta sea 900.12345
     }
 
+    @Test
+    void testDineroInsuficienteExceptionCuenta() {
+        Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345")); // Creo una cuenta con el nombre Cristobal y saldo 1000.00
+        Exception exception = assertThrows(DineroInsuficienteException.class, () -> {
 
+            cuenta.debito(new BigDecimal(1500));
+        });
+        String actual = exception.getMessage(); // Obtengo el mensaje de la excepcion
+        String esperado = "Dinero insuficiente"; // Espero que el mensaje de la excepcion sea Dinero Insuficiente
+        assertEquals(esperado, actual); // Verifico que el mensaje de la excepcion sea el esperado
+    }
+
+    @Test
+    void transferirDineroCuentas(){
+        Cuenta cuenta1 = new Cuenta("Jhon Doe", new BigDecimal("2500")); // Creo una cuenta con el nombre Jhon Doe y saldo 2500
+        Cuenta cuenta2 = new Cuenta("Andres", new BigDecimal("1500.8989")); // Creo una cuenta con el nombre Cristobal y saldo 1000
+
+        Banco banco = new Banco(); // Creo un banco
+        banco.setNombre("Banco del Estado"); // Establezco el nombre del banco como Banco del Estado
+
+        banco.transferir(cuenta2, cuenta1, new BigDecimal(500)); // Realizo una transferencia de 500.00 de la cuenta 2 a la cuenta 1
+
+        assertEquals("1000.8989", cuenta2.getSaldo().toPlainString()); // Verifico que el saldo de la cuenta 2 sea 1000.8989
+        assertEquals("3000", cuenta1.getSaldo().toPlainString()); // Verifico que el saldo de la cuenta 1 sea 3000
+    }
+
+    @Test
+    void testRelacionBancoCuentas(){
+        Cuenta cuenta1 = new Cuenta("Jhon Doe", new BigDecimal("2500")); // Creo una cuenta con el nombre Jhon Doe y saldo 2500
+        Cuenta cuenta2 = new Cuenta("Andres", new BigDecimal("1500.8989")); // Creo una cuenta con el nombre Cristobal y saldo 1000
+
+        Banco banco = new Banco(); // Creo un banco
+        banco.addCuenta(cuenta1); // Agrego la cuenta 1 al banco
+        banco.addCuenta(cuenta2); // Agrego la cuenta 2 al banco
+
+        banco.setNombre("Banco del Estado"); // Establezco el nombre del banco como Banco del Estado
+        banco.transferir(cuenta2, cuenta1, new BigDecimal(500)); // Realizo una transferencia de 500.00 de la cuenta 2 a la cuenta 1
+        assertEquals("1000.8989", cuenta2.getSaldo().toPlainString()); // Verifico que el saldo de la cuenta 2 sea 1000.8989
+        assertEquals("3000", cuenta1.getSaldo().toPlainString()); // Verifico que el saldo de la cuenta 1 sea 3000
+
+        assertEquals(2, banco.getCuentas().size()); // Verifico que el banco tenga 2 cuentas
+    }
 }
