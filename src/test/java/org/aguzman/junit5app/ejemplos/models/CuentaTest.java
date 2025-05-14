@@ -105,5 +105,8 @@ class CuentaTest {
         assertEquals("3000", cuenta1.getSaldo().toPlainString()); // Verifico que el saldo de la cuenta 1 sea 3000
 
         assertEquals(2, banco.getCuentas().size()); // Verifico que el banco tenga 2 cuentas
+        assertEquals("Banco del Estado", cuenta1.getBanco().getNombre()); // Verifico que el nombre del banco de la cuenta 1 sea Banco del Estado
+        assertTrue(banco.getCuentas().stream()
+                .anyMatch(c -> c.getPersona().equals("Andres"))); // Verifico que el banco tenga una cuenta con el nombre Andres
     }
 }
