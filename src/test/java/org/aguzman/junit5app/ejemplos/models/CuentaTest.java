@@ -2,6 +2,8 @@ package org.aguzman.junit5app.ejemplos.models;
 
 import org.aguzman.junit5app.ejemplos.exceptions.DineroInsuficienteException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -11,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CuentaTest {
 
     @Test
+    @DisplayName("Test de nombre de cuenta")
     void testNombreCuenta() {
         Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345")); // Creo una cuenta con el nombre Cristobal y saldo 1000.00
 
@@ -19,11 +22,14 @@ class CuentaTest {
         String esperado = "Cristobal"; // Espero que el nombre de la persona sea Cristobal
         String real = cuenta.getPersona(); // Obtengo el nombre de la persona
 
-        Assertions.assertEquals(esperado,real); // Comparo el nombre esperado con el real
-        Assertions.assertTrue(real.equals("Cristobal")); // Verifico que el nombre real sea igual a Cristobal
+        assertNotNull(real, () -> "La cuenta no puede ser nula");
+        assertEquals(esperado,real, () -> "El nombre de la cuenta no es el que se esperaba"); // Comparo el nombre esperado con el real
+        assertTrue(real.equals("Cristobal"),() -> "Nombre cuenta esperada debe ser igual a la real"); // Verifico que el nombre real sea igual a Cristobal
     }
 
     @Test
+    @DisplayName("Test de saldo de cuenta")
+    @Disabled // Deshabilito este test
     void testSaldoCuenta(){
         Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("-1000.12345"));// Creo una cuenta con el nombre Cristobal y saldo 1000.00
 
@@ -36,6 +42,7 @@ class CuentaTest {
     }
 
     @Test
+    @DisplayName("Test de referencia de cuenta")
     void testReferenciaCuenta(){
        Cuenta cuenta = new Cuenta("John Doe", new BigDecimal("8900.9997")); // Creo una cuenta con el nombre John Doe y saldo 8900.9997
         Cuenta cuenta2 = new Cuenta("John Doe", new BigDecimal("8900.9997"));
@@ -45,6 +52,7 @@ class CuentaTest {
     }
 
     @Test
+    @DisplayName("Test de referencia de cuenta con el mismo objeto")
     void testDebitoCuenta(){
         Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345")); // Creo una cuenta con el nombre Cristobal y saldo 1000.00
         cuenta.debito(new BigDecimal(100)); // Realizo un debito de 100.00
@@ -55,6 +63,7 @@ class CuentaTest {
     }
 
     @Test
+    @DisplayName("Test de credito de cuenta")
     void testCreditoCuenta(){
         Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345")); // Creo una cuenta con el nombre Cristobal y saldo 1000.00
         cuenta.credito(new BigDecimal(100)); // Realizo un credito de 100.00
@@ -65,6 +74,7 @@ class CuentaTest {
     }
 
     @Test
+    @DisplayName("Test de excepcion de dinero insuficiente")
     void testDineroInsuficienteExceptionCuenta() {
         Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345")); // Creo una cuenta con el nombre Cristobal y saldo 1000.00
         Exception exception = assertThrows(DineroInsuficienteException.class, () -> {
@@ -77,6 +87,7 @@ class CuentaTest {
     }
 
     @Test
+    @DisplayName("Test de transferencia de dinero entre cuentas")
     void transferirDineroCuentas(){
         Cuenta cuenta1 = new Cuenta("Jhon Doe", new BigDecimal("2500")); // Creo una cuenta con el nombre Jhon Doe y saldo 2500
         Cuenta cuenta2 = new Cuenta("Andres", new BigDecimal("1500.8989")); // Creo una cuenta con el nombre Cristobal y saldo 1000
@@ -91,6 +102,7 @@ class CuentaTest {
     }
 
     @Test
+    @DisplayName("Test de transferencia de dinero entre cuentas con assertAll")
     void testRelacionBancoCuentas(){
 
         //Preparación del escenario
@@ -126,5 +138,12 @@ class CuentaTest {
         //3. Se establece el nombre del banco
         //4. Se realiza la transferencia de dinero entre las cuentas
         //5. Se realizan las aserciones dentro de assertAll
+
+        //ESTE TEST VERIFICA QUE
+        //La transferencia de dinero entre cuentas funcione correctamente
+        //Las relaciones entre objetos Banco y Cuenta estén bien implementadas
+        //El banco mantiene correctamente sus cuentas
+        //Se puede acceder a la información del banco desde una cuenta
+
     }
 }
