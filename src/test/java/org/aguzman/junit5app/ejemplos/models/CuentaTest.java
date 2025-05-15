@@ -15,16 +15,33 @@ class CuentaTest {
     @Test
     @DisplayName("Test de nombre de cuenta")
     void testNombreCuenta() {
+
+        //Preparación del escenario
+        //Se crean dos objetos de la clase Cuenta con nombres y saldos iniciales
         Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345")); // Creo una cuenta con el nombre Cristobal y saldo 1000.00
 
         //cuenta.setPersona("Cristobal"); // Establezco el nombre de la persona como Cristobal
 
+        //Lo que espero que devuelva el método getPersona()
         String esperado = "Cristobal"; // Espero que el nombre de la persona sea Cristobal
+
+        //Lo que realmente devuelve el método getPersona()
         String real = cuenta.getPersona(); // Obtengo el nombre de la persona
 
+        //Verifico que el nombre de la persona no sea nulo
         assertNotNull(real, () -> "La cuenta no puede ser nula");
+
+        //Verifico que el nombre de la persona sea igual al esperado
         assertEquals(esperado,real, () -> "El nombre de la cuenta no es el que se esperaba"); // Comparo el nombre esperado con el real
+
+        //Otra forma de verificar que el nombre de la persona sea igual al esperado
         assertTrue(real.equals("Cristobal"),() -> "Nombre cuenta esperada debe ser igual a la real"); // Verifico que el nombre real sea igual a Cristobal
+
+
+        //ESTE TEST VERIFICA QUE
+        //1. Al crear una cuenta con el nombre "Cristobal", el método getPersona() devuelve correctamente ese nombre.
+        //2. El valor no sea null
+        //3. El valor sea exactamente el esperado "Cristobal"
     }
 
     @Test
@@ -33,72 +50,148 @@ class CuentaTest {
     void testSaldoCuenta(){
         Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("-1000.12345"));// Creo una cuenta con el nombre Cristobal y saldo 1000.00
 
-        assertNotNull(cuenta.getSaldo()); // Verifico que el saldo no sea nulo
+        //Verifico que el saldo no sea nulo
+        assertNotNull(cuenta.getSaldo());
 
-        Assertions.assertEquals(1000.12345, cuenta.getSaldo().doubleValue()); // Verifico que el saldo de la cuenta sea 1000.12345
-        Assertions.assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO) < 0); // Verifico que el saldo de la cuenta no sea negativo
-        Assertions.assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0); // Verifico que el saldo de la cuenta sea positivo
+        //Verifico que el saldo sea exactamente 1000.12345 (esto fallará porque el saldo es negativo)
+        Assertions.assertEquals(1000.12345, cuenta.getSaldo().doubleValue());
 
+        //Verifico que el saldo NO sea negativo (esto también fallará porque el saldo es negativo)
+        Assertions.assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO) < 0);
+
+        //Verifico que el saldo sea positivo (esto fallará porque el saldo es negativo)
+        Assertions.assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
+
+
+        //ESTE TEST VERIFICA QUE
+        //1. Se crea una cuenta con un saldo megativo : -1000.12345
+        //2. Luego se hacen aserciones que esperan un saldo positivo, lo cual provocará fallos en el test
+        //3. Por eso, el test está deshabilitado con @Disabled
     }
 
     @Test
     @DisplayName("Test de referencia de cuenta")
     void testReferenciaCuenta(){
-       Cuenta cuenta = new Cuenta("John Doe", new BigDecimal("8900.9997")); // Creo una cuenta con el nombre John Doe y saldo 8900.9997
+
+        //Creo dos objetos Cuenta con los mismos datos, nombre y saldo
+        Cuenta cuenta = new Cuenta("John Doe", new BigDecimal("8900.9997"));
         Cuenta cuenta2 = new Cuenta("John Doe", new BigDecimal("8900.9997"));
 
-        // Assertions.assertNotEquals(cuenta, cuenta2); // Verifico que las cuentas no sean iguales
-        Assertions.assertEquals(cuenta, cuenta2); // Verifico que las cuentas sean iguales
+        //Verifico que las cuentas no sean iguales
+        //Assertions.assertNotEquals(cuenta, cuenta2);
+
+        //Verifico que las cuentas sean iguales
+        Assertions.assertEquals(cuenta, cuenta2);
+
+        //ESTE TEST VERIFICA QUE
+        //1. Se crean dos cuentas con los mismos datos
+        //2. Se espera que las cuentas sean iguales, ya que se han implementado correctamente los métodos equals() y hashCode() en la clase Cuenta
+        //3. Si no se implementan correctamente, el test fallará
+        //4. Se espera que las cuentas sean iguales, ya que tienen el mismo nombre y saldo
     }
 
     @Test
     @DisplayName("Test de referencia de cuenta con el mismo objeto")
     void testDebitoCuenta(){
-        Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345")); // Creo una cuenta con el nombre Cristobal y saldo 1000.00
-        cuenta.debito(new BigDecimal(100)); // Realizo un debito de 100.00
 
-        assertNotNull(cuenta.getSaldo()); // Verifico que el saldo no sea nulo
-        assertEquals(900, cuenta.getSaldo().intValue()); // Verifico que el saldo de la cuenta sea 900.00
-        assertEquals("900.12345", cuenta.getSaldo().toPlainString()); // Verifico que el saldo de la cuenta sea 900.12345
+        //Creo una cuenta con el nombre Cristobal y saldo 1000.00
+        Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345"));
+
+        //Realizo un debito de 100.00
+        cuenta.debito(new BigDecimal(100));
+
+        //Verifico que el saldo no sea nulo
+        assertNotNull(cuenta.getSaldo());
+
+        //Verifico que la parte entera del saldo sea 900.00
+        assertEquals(900, cuenta.getSaldo().intValue());
+
+        //Verifico que el saldo completo (con decimales) sea exactamente 900.12345
+        assertEquals("900.12345", cuenta.getSaldo().toPlainString());
+
+        //ESTE TEST VERIFICA QUE
+        //1. Se resta correctamente el monto de saldo de la cuenta
+        //2. Se mantiene la precisión decimal del saldo
+        //3. No deja el saldo en nulo ni lanza errores inesperados
     }
 
     @Test
     @DisplayName("Test de credito de cuenta")
     void testCreditoCuenta(){
-        Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345")); // Creo una cuenta con el nombre Cristobal y saldo 1000.00
-        cuenta.credito(new BigDecimal(100)); // Realizo un credito de 100.00
 
-        assertNotNull(cuenta.getSaldo()); // Verifico que el saldo no sea nulo
-        assertEquals(1100, cuenta.getSaldo().intValue()); // Verifico que el saldo de la cuenta sea 900.00
-        assertEquals("1100.12345", cuenta.getSaldo().toPlainString()); // Verifico que el saldo de la cuenta sea 900.12345
+        //Creo una cuenta con el nombre Cristobal y saldo 1000.00
+        Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345"));
+
+        //Realizo un credito de 100.00
+        cuenta.credito(new BigDecimal(100));
+
+        //Verifico que el saldo no sea nulo
+        assertNotNull(cuenta.getSaldo());
+
+        //Verifico que la parte entera del saldo sea 1100.00
+        assertEquals(1100, cuenta.getSaldo().intValue());
+
+        //Verifico que el saldo completo (con decimales) sea exactamente 1100.12345
+        assertEquals("1100.12345", cuenta.getSaldo().toPlainString());
+
+        //ESTE TEST VERIFICA QUE
+        //1. Se suma correctamente el monto al saldo de la cuenta
+        //2. Mantiene la precisión decimal del saldo
+        //3. No deja el saldo en nulo ni lanza errores inesperados
     }
 
     @Test
     @DisplayName("Test de excepcion de dinero insuficiente")
     void testDineroInsuficienteExceptionCuenta() {
-        Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345")); // Creo una cuenta con el nombre Cristobal y saldo 1000.00
-        Exception exception = assertThrows(DineroInsuficienteException.class, () -> {
 
-            cuenta.debito(new BigDecimal(1500));
+        //Creo una cuenta con el nombre Cristobal y saldo 1000.00
+        Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345"));
+
+        //Verifico que al intentar debitar más dinero del disponible, se lanza una excepción
+        Exception exception = assertThrows(DineroInsuficienteException.class, () -> {
+            cuenta.debito(new BigDecimal(1500)); //Intento debitar 1500.00, más de lo que hay
         });
-        String actual = exception.getMessage(); // Obtengo el mensaje de la excepcion
-        String esperado = "Dinero insuficiente"; // Espero que el mensaje de la excepcion sea Dinero Insuficiente
-        assertEquals(esperado, actual); // Verifico que el mensaje de la excepcion sea el esperado
+
+        //Obtengo el mensaje de la excepción lanzada
+        String actual = exception.getMessage();
+
+        //Defino el mensaje que espero recibir al lanzar la excepción
+        String esperado = "Dinero insuficiente";
+
+        //Verifico que el mensaje de la excepción sea el esperado
+        assertEquals(esperado, actual);
+
+        //ESTE TEST VERIFICA QUE
+        //1. El método debito() lanza una excepción del tipo DineroInsuficienteException cuando se intenta retirar más dinero del que hay en la cuenta
+        //2. El mensaje de la excepción es el correcto: "Dinero insuficiente"
     }
 
     @Test
     @DisplayName("Test de transferencia de dinero entre cuentas")
     void transferirDineroCuentas(){
-        Cuenta cuenta1 = new Cuenta("Jhon Doe", new BigDecimal("2500")); // Creo una cuenta con el nombre Jhon Doe y saldo 2500
-        Cuenta cuenta2 = new Cuenta("Andres", new BigDecimal("1500.8989")); // Creo una cuenta con el nombre Cristobal y saldo 1000
 
-        Banco banco = new Banco(); // Creo un banco
-        banco.setNombre("Banco del Estado"); // Establezco el nombre del banco como Banco del Estado
+        //Creo dos objetos de la clase Cuenta con nombres y saldos iniciales
+        Cuenta cuenta1 = new Cuenta("Jhon Doe", new BigDecimal("2500"));
+        Cuenta cuenta2 = new Cuenta("Andres", new BigDecimal("1500.8989"));
 
-        banco.transferir(cuenta2, cuenta1, new BigDecimal(500)); // Realizo una transferencia de 500.00 de la cuenta 2 a la cuenta 1
+        //Creo un banco y le asigno un nombre
+        Banco banco = new Banco();
+        banco.setNombre("Banco del Estado");
 
-        assertEquals("1000.8989", cuenta2.getSaldo().toPlainString()); // Verifico que el saldo de la cuenta 2 sea 1000.8989
-        assertEquals("3000", cuenta1.getSaldo().toPlainString()); // Verifico que el saldo de la cuenta 1 sea 3000
+
+        //Realizo una transferencia de 500 desde cuenta2 (Andres) a cuenta1 (Jhon Doe)
+        banco.transferir(cuenta2, cuenta1, new BigDecimal(500));
+
+        //Verifico que el saldo de cuenta2 se haya reducido correctamente
+        assertEquals("1000.8989", cuenta2.getSaldo().toPlainString());
+
+        //Verifico que el saldo de la cuenta1 haya aumentado correctamente
+        assertEquals("3000", cuenta1.getSaldo().toPlainString());
+
+        //ESTE TEST VERIFICA QUE
+        //1. Resta correctamente el monto de la cuenta origen (cuenta2)
+        //2. Suma correctamente el monto a la cuenta destino (cuenta1)
+        //3. Mantiene la precisión decimal en los saldos 
     }
 
     @Test
