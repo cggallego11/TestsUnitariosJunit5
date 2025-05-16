@@ -1,24 +1,52 @@
 package org.aguzman.junit5app.ejemplos.models;
 
 import org.aguzman.junit5app.ejemplos.exceptions.DineroInsuficienteException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // Indica que la clase de prueba se ejecutará en el ciclo de vida de la clase
+// Esto significa que los métodos @BeforeAll y @AfterAll se ejecutarán una vez para toda la clase, en lugar de una vez por cada método de prueba
 class CuentaTest {
+
+    Cuenta cuenta;
+
+    //Este método se ejecuta antes de cada test
+    @BeforeEach
+    void initMetodoTest(){
+        System.out.println("Iniciando el test");
+         cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345"));
+    }
+
+    //Este método se ejecuta después de cada test
+    @AfterEach
+    void tearDown(){
+        System.out.println("Finalizando el test");
+    }
+
+    //Este método se ejecuta una vez antes de todos los tests
+    @BeforeAll
+     void beforeAll(){
+        System.out.println("Iniciando los tests");
+    }
+
+    //Este método se ejecuta una vez después de todos los tests
+    @AfterAll
+     void afterAll(){
+        System.out.println("Finalizando los tests");
+    }
 
     @Test
     @DisplayName("Test de nombre de cuenta")
     void testNombreCuenta() {
 
         //Preparación del escenario
-        //Se crean dos objetos de la clase Cuenta con nombres y saldos iniciales
-        Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345")); // Creo una cuenta con el nombre Cristobal y saldo 1000.00
 
         //cuenta.setPersona("Cristobal"); // Establezco el nombre de la persona como Cristobal
 
@@ -48,7 +76,6 @@ class CuentaTest {
     @DisplayName("Test de saldo de cuenta")
     @Disabled // Deshabilito este test
     void testSaldoCuenta(){
-        Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("-1000.12345"));// Creo una cuenta con el nombre Cristobal y saldo 1000.00
 
         //Verifico que el saldo no sea nulo
         assertNotNull(cuenta.getSaldo());
@@ -119,9 +146,6 @@ class CuentaTest {
     @DisplayName("Test de credito de cuenta")
     void testCreditoCuenta(){
 
-        //Creo una cuenta con el nombre Cristobal y saldo 1000.00
-        Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345"));
-
         //Realizo un credito de 100.00
         cuenta.credito(new BigDecimal(100));
 
@@ -143,9 +167,6 @@ class CuentaTest {
     @Test
     @DisplayName("Test de excepcion de dinero insuficiente")
     void testDineroInsuficienteExceptionCuenta() {
-
-        //Creo una cuenta con el nombre Cristobal y saldo 1000.00
-        Cuenta cuenta = new Cuenta("Cristobal", new BigDecimal("1000.12345"));
 
         //Verifico que al intentar debitar más dinero del disponible, se lanza una excepción
         Exception exception = assertThrows(DineroInsuficienteException.class, () -> {
@@ -191,7 +212,7 @@ class CuentaTest {
         //ESTE TEST VERIFICA QUE
         //1. Resta correctamente el monto de la cuenta origen (cuenta2)
         //2. Suma correctamente el monto a la cuenta destino (cuenta1)
-        //3. Mantiene la precisión decimal en los saldos 
+        //3. Mantiene la precisión decimal en los saldos
     }
 
     @Test
@@ -237,6 +258,56 @@ class CuentaTest {
         //Las relaciones entre objetos Banco y Cuenta estén bien implementadas
         //El banco mantiene correctamente sus cuentas
         //Se puede acceder a la información del banco desde una cuenta
+
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS) // Este test solo se ejecuta en Windows
+    void testSoloWindows(){
+
+    }
+
+    @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC}) // Este test solo se ejecuta en Linux y Mac
+    void testSoloLinuxMac(){
+
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS) // Este test no se ejecuta en Windows
+    void noWindows(){
+
+    }
+
+    @Test
+    void imprimirSystemProperties(){
+        System.getProperties().forEach((k,v) -> {
+            System.out.println(k + " : " + v);
+        });
+    }
+
+    @Test
+    @DisplayName("Test de saldo de cuenta")
+    @Disabled // Deshabilito este test
+    void testSaldoCuentaDev(){
+
+        boolean esDev = "DEV".equals(System.getProperty("ambiente")); // Verifico si el ambiente es DEV
+
+        //No se ejecuta el test si el ambiente no es DEV
+        assumeTrue(esDev); // Asumo que el ambiente es DEV, si no lo es, el test no se ejecuta
+
+        //Verifico que el saldo no sea nulo
+        assertNotNull(cuenta.getSaldo());
+
+        //Verifico que el saldo sea exactamente 1000.12345 (esto fallará porque el saldo es negativo)
+        Assertions.assertEquals(1000.12345, cuenta.getSaldo().doubleValue());
+
+        //Verifico que el saldo NO sea negativo (esto también fallará porque el saldo es negativo)
+        Assertions.assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO) < 0);
+
+        //Verifico que el saldo sea positivo (esto fallará porque el saldo es negativo)
+        Assertions.assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO) > 0);
+
 
     }
 }
